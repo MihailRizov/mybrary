@@ -79,7 +79,7 @@ router.post('/', async (req, res) => {
         // res.redirect(`books/${newBook.id}`);
         res.redirect('/books')
     } catch (error) {
-        console.error(error);
+        // console.error(error);
         // if (book.coverImageName != null) {
         //     removeBookCover(book.coverImageName);
         // }
@@ -92,6 +92,8 @@ function saveCover(book, coverEncoded) {
     if (coverEncoded == null) {
         return;
     }
+    
+    const cover = JSON.parse(coverEncoded);
     
     if (cover != null && imageMimeTypes.includes(cover.type)) {
         book.coverImage = new Buffer.from(cover.data, 'base64');
