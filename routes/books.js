@@ -79,7 +79,7 @@ router.post('/', async (req, res) => {
         // res.redirect(`books/${newBook.id}`);
         res.redirect('/books')
     } catch (error) {
-        // console.error(error);
+        console.error(error);
         // if (book.coverImageName != null) {
         //     removeBookCover(book.coverImageName);
         // }
