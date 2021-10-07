@@ -20,11 +20,11 @@
 </head>
 <body>
     <div class="container">
+        <%- include('../partials/header.ejs') %>
         <div class="inner-container">
-            <%- include('../partials/header.ejs') %>
+            <%- include('../partials/errorMessage.ejs') %> 
+            <%- body %> 
         </div>
-        <%- include('../partials/errorMessage.ejs') %> 
-        <%- body %> 
     </div>
 </body>
 </html>
