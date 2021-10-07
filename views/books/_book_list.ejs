@@ -1,5 +1,8 @@
-<div>
+<% bookCoverClass = locals.large ? 'book-cover-large' : '' %> 
+<% bookGridClass = locals.large ? 'book-grid-large' : '' %> 
+
+<div class="book-grid <%= bookGridClass %> ">
     <% books.forEach(book => { %>
-        <%- include('./_book_item.ejs', { book: book }) %>
+        <%- include('./_book_item.ejs', { book: book, large: large }) %>
     <% }) %>
 </div>

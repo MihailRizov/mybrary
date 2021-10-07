@@ -12,8 +12,8 @@
 </form>
 <br>
 <% authors.forEach(author => { %>
-    <div>
-        <span><%= author.name %></span>
+    <div class="author-row">
+        <span class="author-name"><%= author.name %></span>
         <div class="btn-row">
             <a class="btn btn-primary" href="/authors/<%= author.id %>">View</a>
             <a class="btn btn-primary" href="/authors/<%= author.id %>/edit">Edit</a>
