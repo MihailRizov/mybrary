@@ -1,4 +1,4 @@
-<h4><%= book.title %></h4>
+<h4 class="page-header"><%= book.title %></h4>
 <%- include('./_book_item.ejs', { book: book }) %>
 <div>Author: <%= book.author.name %></div>
 <div>Publish date: <%= book.publishDate.toDateString() %></div>
