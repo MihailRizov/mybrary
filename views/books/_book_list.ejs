@@ -1,5 +1,5 @@
 <div>
     <% books.forEach(book => { %>
-        <img height="150" width="100" src="<%= book.coverImagePath %> ">
+        <%- include('./_book_item.ejs', { book: book }) %>
     <% }) %>
 </div>

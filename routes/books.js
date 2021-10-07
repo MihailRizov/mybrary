@@ -59,6 +59,26 @@ router.get('/new', async (req, res) => {
     renderNewPage(res, book);
 });
 
+// Book page route
+router.get('/:id', async (req, res) => {
+    try {
+        const book = await Book.findById(req.params.id.trim()).populate('author').exec();
+        res.render('books/show', { book: book });
+    } catch (error) {
+        res.redirect('/');
+    }
+});
+
+// Edit page route
+router.get('/:id/edit', async (req, res) => {
+    try {
+        const book = await Book.findById(req.params.id.trim());
+        renderEditPage(res, book);
+    } catch (error) {
+        res.redirect('/');
+    }
+});
+
 // Create Book route
 // router.post('/', upload.single('cover'), async (req, res) => { // upload.single tells multer that we uploading a single file with the name of cover // multer will upload the file in the correct folder. And it will add a variable in to the req called file
 router.post('/', async (req, res) => {
@@ -76,8 +96,7 @@ router.post('/', async (req, res) => {
     
     try {
         const newBook = await book.save();
-        // res.redirect(`books/${newBook.id}`);
-        res.redirect('/books')
+        res.redirect(`books/${newBook.id}`);
     } catch (error) {
         // console.error(error);
         // if (book.coverImageName != null) {
@@ -85,6 +104,51 @@ router.post('/', async (req, res) => {
         // }
         
         renderNewPage(res, book, true);
+    }
+});
+
+// Update Book route
+router.put('/:id', async (req, res) => {
+    let book
+    try {
+        const book = await Book.findById(req.params.id.trim());
+        book.title = req.body.title;
+        book.author = req.body.author;
+        book.publishDate = req.body.publishDate;
+        book.pageCount = req.body.pageCount;
+        book.description = req.body.description;
+        if (req.body.cover != null && req.body.cover !== '') {
+            saveCover(book, req.book.cover)
+        }
+        
+        await book.save();
+        
+        res.redirect(`/books/${book.id}`);
+    } catch (error) {
+        if (book != null) {
+            renderEditPage(res, book, true);
+        } else {
+            res.redirect('/');
+        }
+    }
+});
+
+// Delete Book route
+router.delete('/:id', async (req, res) => {
+    let book
+    try {
+        const book = await Book.findById(req.params.id.trim());
+        await book.remove();
+        res.redirect('/books');
+    } catch (error) {
+        if (book == null) {
+            res.redirect('books/show', {
+                book: book,
+                errorMessage: 'Could not remove the book'
+            }); // No book was found
+        } else {
+            res.redirect(`/books/${book.id}`);
+        }
     }
 });
 
@@ -98,19 +162,35 @@ function saveCover(book, coverEncoded) {
     if (cover != null && imageMimeTypes.includes(cover.type)) {
         book.coverImage = new Buffer.from(cover.data, 'base64');
         book.coverImageType = cover.type;
-        console.log(book)
     }
 };
 
-async function renderNewPage(res, book, hasError = false) {
+function renderNewPage(res, book, hasError = false) {
+    renderFormPage(res, book, 'new', hasError);
+}
+
+function renderEditPage(res, book, hasError = false) {
+    renderFormPage(res, book, 'edit', hasError);
+}
+
+async function renderFormPage(res, book, form, hasError = false) {
     try {
         const authors = await Author.find({}); // Empty object means no conditions
         const params = { authors: authors, book: book };
         if (hasError) {
-            params.errorMessage = 'Error creating a book';
+            let msg;
+            if (form === 'new') {
+                msg = 'Error new a book';
+            }
+            
+            if (form === 'edit') {
+                msg = 'Error editing a book';
+            }
+            
+            params.errorMessage = msg;
         }
         
-        res.render('books/new', params);
+        res.render(`books/${form}`, params);
     } catch (error) {
         res.redirect('/books');
     }
